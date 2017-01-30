@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+	<title>Estados y Municipos</title>
+		<!--Bootstrap css-->
+	<link rel="stylesheet" type="text/css" href="node_modules\bootstrap\dist\css\bootstrap.min.css">
+
+	<!--JQuery-->
+	<script type="text/javascript" src="node_modules\jquery\dist\jquery.min.js"></script>
+
+	<!--Bootstrap.js-->
+	<script type="text/javascript" src="node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+</head>
+<body>
+	<select id="estados"></select>
+	<select id="municipios"></select>
+</body>
+
+<script type="text/javascript">
+	tomarDatosDeServidor();
+	function tomarDatosDeServidor(){
+		$.ajax({
+			url: 'http://localhost:49285/Estado/getJsonList',
+			type: 'GET',
+			dataType:'JSON',
+			success: function(result,status,xhr){
+				estados = result;
+				$(estados).each(function () {
+                        var option = $(document.createElement('option'));
+                        option.text(this.estado);
+                        option.val(this.estadoID);
+                        $("#estados").append(option);
+                    });
+			},
+            
+			error: function(xhr,status,error){
+				alert('No esta disponible el servidor.');
+			}, 
+		});
+		
+	}
+	$('#estados').change(function(){
+			$.ajax({
+			url: 'http://localhost:49285/Estado/getMunicipios',
+			type: 'GET',
+			dataType:'JSON',
+			data:{estado:$('#estados').val()},
+			success: function(result,status,xhr){
+				municipios = result;
+				$('#municipios').children().remove();
+				$(municipios).each(function () {
+                        var option = $(document.createElement('option'));
+                        option.text(this.municipio);
+                        option.val(this.municipioID);
+                        $("#municipios").append(option);
+                    });
+			},
+            
+			error: function(xhr,status,error){
+				alert('No esta disponible el servidor.');
+			},
+		});
+		});
+</script>
+</html>

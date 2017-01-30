@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Especificaciones</title>
+	<link rel="stylesheet" type="text/css" href="node_modules\bootstrap\dist\css\bootstrap.min.css">
+	<script type="text/javascript" src="node_modules\jquery\dist\jquery.min.js"></script>
+	<script type="text/javascript" src="node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+</head>
+<body>
+	<select class="selectpicker" id="modelos"></select>
+
+	<div class="container">
+		<div class="panel panel-primary">
+      	<div class="panel-heading">Modelo</div>
+      	<div class="panel-body">
+      		<table class="table table-stripped" id="tblProductos">
+      			<tr>
+      				<th>Modelo: </th>
+      				<td id="modelo"></td>
+      			</tr>
+      			<tr>
+      				<th>Costo: </th>
+      				<td id="costo"></td>
+      			</tr>
+      			<tr>
+      				<th>RAM: </th>
+      				<td id="ram"></td>
+      			</tr>
+      			<tr>
+      				<th>Procesador: </th>
+      				<td id="procesador"></td>
+      			</tr>
+      			<tr>
+      				<th>Disco duro: </th>
+      				<td id="hdd"></td>
+      			</tr>
+      			<tr>
+      				<th>Dimensiones</th>
+      				<td id="dimensiones"></td>
+      			</tr>
+      		</table>
+      	</div>
+    </div>
+	</div>
+</body>
+<script type="text/javascript">
+	llenarSelect();
+	function llenarSelect(){
+		$.ajax({
+			url: 'http://localhost:49285/Especificacion/getEspecificaciones',
+			type: 'GET',
+			dataType:'JSON',
+			success: function(result,status,xhr){
+				modelos = result;
+				$(modelos).each(function () {
+                        var option = $(document.createElement('option'));
+                        option.text(this.modelo);
+                        option.val(this.id);
+                        $("#modelos").append(option);
+                    });
+			},
+            
+			error: function(xhr,status,error){
+				alert('No esta disponible el servidor.');
+			}, 
+		});
+		
+	}
+	$('#modelos').change(function(){
+		$.ajax({
+			url: 'http://localhost:49285/Especificacion/getEspecificaciones',
+			type: 'GET',
+			dataType:'JSON',
+			data:{id:$('#modelos').val()},
+			success: function(result,status,xhr){
+				modelos = result;
+				
+				$('#modelo').text(modelos.modelo);
+				$('#costo').text(modelos.costo);
+				$('#ram').text(modelos.ram);
+				$('#procesador').text(modelos.procesador);
+				$('#hdd').text(modelos.hdd);
+				$('#dimensiones').text(modelos.dimensiones);
+			},
+            
+			error: function(xhr,status,error){
+				alert('No esta disponible el servidor.');
+			},
+		});
+	})
+</script>
+</html>
